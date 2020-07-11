@@ -1,0 +1,408 @@
+  
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Friend Finder || Survey</title>
+    <link href="http://fonts.googleapis.com/css?family=Corben:bold" rel="stylesheet" type="text/css">
+    <link href="http://fonts.googleapis.com/css?family=Nobile" rel="stylesheet" type="text/css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm"
+        crossorigin="anonymous">
+
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+        crossorigin="anonymous"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+        crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+        crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="/app/css/style.css">
+    <style>
+        
+        .question {
+            padding-top: 10px;
+        }
+    </style>
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-133442962-10"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag() { dataLayer.push(arguments); }
+        gtag('js', new Date());
+
+        gtag('config', 'UA-133442962-10');
+    </script>
+
+    <script>
+        $(document).ready(function () {
+            $('body').on('click', '#submitBtn', function () {
+                console.log("Yup")
+                event.preventDefault()
+
+                var scores = []
+                var scoresIntArr = []
+
+                var friendName = $("#name").val().trim()
+                var image = $("#picture").val().trim()
+                if (!friendName || !image) {
+                    alert("please include a name and/or image")
+                    return
+                }
+
+                var q1 = $("input[name=q1]:checked").val().trim()
+                scores.push(q1)
+                var q2 = $("input[name=q2]:checked").val().trim()
+                scores.push(q2)
+                var q3 = $("input[name=q3]:checked").val().trim()
+                scores.push(q3)
+                var q4 = $("input[name=q4]:checked").val().trim()
+                scores.push(q4)
+                var q5 = $("input[name=q5]:checked").val().trim()
+                scores.push(q5)
+                var q6 = $("input[name=q6]:checked").val().trim()
+                scores.push(q6)
+                var q7 = $("input[name=q7]:checked").val().trim()
+                scores.push(q7)
+                var q8 = $("input[name=q8]:checked").val().trim()
+                scores.push(q8)
+                var q9 = $("input[name=q9]:checked").val().trim()
+                scores.push(q9)
+                var q10 = $("input[name=q10]:checked").val().trim()
+                scores.push(q10)
+
+                //all the scores values are coming across as strings rather than INTs. 
+                scores.forEach(element => {
+                    var convertedNumber = parseInt(element)
+                    scoresIntArr.push(convertedNumber)
+
+                });
+                var newFriend = {
+                    "name": friendName,
+                    "photo": image,
+                    "scores": scoresIntArr
+                }
+
+
+                $.post("/api/friends", newFriend,
+                    function (data) {
+
+                        // data being sent back IS the updated friends array 
+
+
+                        $("#friendName").html("Your new friend is " + data.name)
+                        var newImg = $("<img>")
+                        newImg.attr("src", data.photo)
+                        newImg.attr("width", "90%")
+                        $("#friendPic").empty()
+                        $("#friendPic").append(newImg)
+                        $('#myModal').modal('show')
+                    });
+
+            })
+
+            $('body').on('click', '.modalClose', function () {
+                window.location.href = "/survey";
+            })
+
+        });
+
+
+
+
+    </script>
+</head>
+
+<body>
+    <div class="container">
+
+        <div class="jumbotron">
+            <h1> Friend Finder Survey</h1>
+            <hr>
+            <h3>Fill out the questions below to be matched with a new friend</h3>
+
+        </div>
+
+
+        <!-- Modal -->
+        <div class="modal" tabindex="-1" role="dialog" id="myModal">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="friendName"></h5>
+
+                        <button type="button" class="close modalClose" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div style="text-align: center" id="friendPic"></div>
+                    <div class="modal-footer">
+
+                        <button type="button" class="btn btn-secondary modalClose" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="row">
+            <div class="col-md-2"></div>
+
+            <div class="col-md-8">
+                <form>
+                    <strong>First name:</strong> *required
+                    <input type="text" name="name" id="name" style="width:100%">
+                    <br>
+                    <br>
+                    <strong>Image link:</strong> *required
+                    <input type="text" name="picture" id="picture" style="width:100%">
+                    <br>
+                    <br>
+                </form>
+                <p>Fill out the next 10 questions using the following scale:</p>
+                <ol>
+                    <li>Strongly disagree</li>
+                    <li>Disagree</li>
+                    <li>Neutral</li>
+                    <li>Agree</li>
+                    <li>Strongly agree</li>
+                </ol>
+                <div class="question">
+                    <h4>1. Your mind is always buzzing with unexplored ideas and plans.</h4>
+
+                    <div class="btn-group btn-group-toggle" data-toggle="buttons" id="q1">
+                        <label class="btn btn-secondary ">
+                            <input type="radio" name="q1" id="q1option1" value=1 autocomplete="off"> 1
+                        </label>
+                        <label class="btn btn-secondary">
+                            <input type="radio" name="q1" id="q1option2" value=2 autocomplete="off"> 2
+                        </label>
+                        <label class="btn btn-secondary active">
+                            <input type="radio" name="q1" id="q1option3" value=3 autocomplete="off" checked> 3
+                        </label>
+                        <label class="btn btn-secondary">
+                            <input type="radio" name="q1" id="q1option4" value=4 autocomplete="off"> 4
+                        </label>
+                        <label class="btn btn-secondary">
+                            <input type="radio" name="q1" id="q1option5" value=5 autocomplete="off"> 5
+                        </label>
+                    </div>
+                </div>
+
+                <div class="question">
+                    <h4>2. Generally speaking, you rely more on your experience than your imagination.
+                    </h4>
+                    <div class="btn-group btn-group-toggle" data-toggle="buttons" id="q2">
+                        <label class="btn btn-secondary ">
+                            <input type="radio" name="q2" id="q2option1" value=1 autocomplete="off"> 1
+                        </label>
+                        <label class="btn btn-secondary">
+                            <input type="radio" name="q2" id="q2option2" value=2 autocomplete="off"> 2
+                        </label>
+                        <label class="btn btn-secondary active">
+                            <input type="radio" name="q2" id="q2option3" value=3 autocomplete="off" checked> 3
+                        </label>
+                        <label class="btn btn-secondary">
+                            <input type="radio" name="q2" id="q2option4" value=4 autocomplete="off"> 4
+                        </label>
+                        <label class="btn btn-secondary">
+                            <input type="radio" name="q2" id="q2option5" value=5 autocomplete="off"> 5
+                        </label>
+                    </div>
+                </div>
+
+                <div class="question">
+                    <h4>3. You find it easy to stay relaxed and focused even when there is some pressure.
+                    </h4>
+                    <div class="btn-group btn-group-toggle" data-toggle="buttons" id="q3">
+                        <label class="btn btn-secondary ">
+                            <input type="radio" name="q3" id="q3option1" value=1 autocomplete="off"> 1
+                        </label>
+                        <label class="btn btn-secondary">
+                            <input type="radio" name="q3" id="q3option2" value=2 autocomplete="off"> 2
+                        </label>
+                        <label class="btn btn-secondary active">
+                            <input type="radio" name="q3" id="q3option3" value=3 autocomplete="off" checked> 3
+                        </label>
+                        <label class="btn btn-secondary">
+                            <input type="radio" name="q3" id="q3option4" value=4 autocomplete="off"> 4
+                        </label>
+                        <label class="btn btn-secondary">
+                            <input type="radio" name="q3" id="q3option5" value=5 autocomplete="off"> 5
+                        </label>
+                    </div>
+                </div>
+
+                <div class="question">
+                    <h4>4. You rarely do something just out of sheer curiosity.
+                    </h4>
+                    <div class="btn-group btn-group-toggle" data-toggle="buttons" id="q4">
+                        <label class="btn btn-secondary ">
+                            <input type="radio" name="q4" id="q4option1" value=1 autocomplete="off"> 1
+                        </label>
+                        <label class="btn btn-secondary">
+                            <input type="radio" name="q4" id="q4option2" value=2 autocomplete="off"> 2
+                        </label>
+                        <label class="btn btn-secondary active">
+                            <input type="radio" name="q4" id="q4option3" value=3 autocomplete="off" checked> 3
+                        </label>
+                        <label class="btn btn-secondary">
+                            <input type="radio" name="q4" id="q4option4" value=4 autocomplete="off"> 4
+                        </label>
+                        <label class="btn btn-secondary">
+                            <input type="radio" name="q4" id="q4option5" value=5 autocomplete="off"> 5
+                        </label>
+                    </div>
+                </div>
+
+                <div class="question">
+                    <h4>5. People can rarely upset you.</h4>
+                    <div class="btn-group btn-group-toggle" data-toggle="buttons" id="q5">
+                        <label class="btn btn-secondary ">
+                            <input type="radio" name="q5" id="q5option1" value=1 autocomplete="off"> 1
+                        </label>
+                        <label class="btn btn-secondary">
+                            <input type="radio" name="q5" id="q5option2" value=2 autocomplete="off"> 2
+                        </label>
+                        <label class="btn btn-secondary active">
+                            <input type="radio" name="q5" id="q5option3" value=3 autocomplete="off" checked> 3
+                        </label>
+                        <label class="btn btn-secondary">
+                            <input type="radio" name="q5" id="q5option4" value=4 autocomplete="off"> 4
+                        </label>
+                        <label class="btn btn-secondary">
+                            <input type="radio" name="q1" id="q5option5" value=5 autocomplete="off"> 5
+                        </label>
+                    </div>
+                </div>
+
+                <div class="question">
+                    <h4>6. It is often difficult for you to relate to other people’s feelings.
+                    </h4>
+                    <div class="btn-group btn-group-toggle" data-toggle="buttons" id="q6">
+                        <label class="btn btn-secondary ">
+                            <input type="radio" name="q6" id="q6option1" value=1 autocomplete="off"> 1
+                        </label>
+                        <label class="btn btn-secondary">
+                            <input type="radio" name="q6" id="q6option2" value=2 autocomplete="off"> 2
+                        </label>
+                        <label class="btn btn-secondary active">
+                            <input type="radio" name="q6" id="q6option3" value=3 autocomplete="off" checked> 3
+                        </label>
+                        <label class="btn btn-secondary">
+                            <input type="radio" name="q6" id="q6option4" value=4 autocomplete="off"> 4
+                        </label>
+                        <label class="btn btn-secondary">
+                            <input type="radio" name="q6" id="q6option5" value=5 autocomplete="off"> 5
+                        </label>
+                    </div>
+                    <div class="question">
+                        <h4>7. In a discussion, truth should be more important than people’s sensitivities.
+                        </h4>
+                        <div class="btn-group btn-group-toggle" data-toggle="buttons" id="q7">
+                            <label class="btn btn-secondary ">
+                                <input type="radio" name="q7" id="q7option1" value=1 autocomplete="off"> 1
+                            </label>
+                            <label class="btn btn-secondary">
+                                <input type="radio" name="q7" id="q7option2" value=2 autocomplete="off"> 2
+                            </label>
+                            <label class="btn btn-secondary active">
+                                <input type="radio" name="q7" id="q7option3" value=3 autocomplete="off" checked> 3
+                            </label>
+                            <label class="btn btn-secondary">
+                                <input type="radio" name="q7" id="q7option4" value=4 autocomplete="off"> 4
+                            </label>
+                            <label class="btn btn-secondary">
+                                <input type="radio" name="q7" id="q7option5" value=5 autocomplete="off"> 5
+                            </label>
+                        </div>
+                    </div>
+                    <div class="question">
+                        <h4>8. You rarely get carried away by fantasies and ideas.
+                        </h4>
+                        <div class="btn-group btn-group-toggle" data-toggle="buttons" id="q8">
+                            <label class="btn btn-secondary ">
+                                <input type="radio" name="q8" id="q8option1" value=1 autocomplete="off"> 1
+                            </label>
+                            <label class="btn btn-secondary">
+                                <input type="radio" name="q8" id="q8option2" value=2 autocomplete="off"> 2
+                            </label>
+                            <label class="btn btn-secondary active">
+                                <input type="radio" name="q8" id="q8option3" value=3 autocomplete="off" checked> 3
+                            </label>
+                            <label class="btn btn-secondary">
+                                <input type="radio" name="q8" id="q8option4" value=4 autocomplete="off"> 4
+                            </label>
+                            <label class="btn btn-secondary">
+                                <input type="radio" name="q8" id="q8option5" value=5 autocomplete="off"> 5
+                            </label>
+                        </div>
+                    </div>
+                    <div class="question">
+                        <h4>9. You think that everyone’s views should be respected regardless of whether they are
+                            supported by
+                            facts or not.
+                        </h4>
+                        <div class="btn-group btn-group-toggle" data-toggle="buttons" id="q9">
+                            <label class="btn btn-secondary ">
+                                <input type="radio" name="q9" id="q9option1" value=1 autocomplete="off"> 1
+                            </label>
+                            <label class="btn btn-secondary">
+                                <input type="radio" name="q9" id="q9option2" value=2 autocomplete="off"> 2
+                            </label>
+                            <label class="btn btn-secondary active">
+                                <input type="radio" name="q9" id="q9option3" value=3 autocomplete="off" checked> 3
+                            </label>
+                            <label class="btn btn-secondary">
+                                <input type="radio" name="q9" id="q9option4" value=4 autocomplete="off"> 4
+                            </label>
+                            <label class="btn btn-secondary">
+                                <input type="radio" name="q9" id="q9option5" value=5 autocomplete="off"> 5
+                            </label>
+                        </div>
+                    </div>
+                    <div class="question">
+                        <h4>10. You feel more energetic after spending time with a group of people.
+                        </h4>
+                        <div class="btn-group btn-group-toggle" data-toggle="buttons" id="q10">
+                            <label class="btn btn-secondary ">
+                                <input type="radio" name="q10" id="q10option1" value=1 autocomplete="off"> 1
+                            </label>
+                            <label class="btn btn-secondary">
+                                <input type="radio" name="q10" id="q10option2" value=2 autocomplete="off"> 2
+                            </label>
+                            <label class="btn btn-secondary active">
+                                <input type="radio" name="q10" id="q10option3" value=3 autocomplete="off" checked> 3
+                            </label>
+                            <label class="btn btn-secondary">
+                                <input type="radio" name="q10" id="q10option4" value=4 autocomplete="off"> 4
+                            </label>
+                            <label class="btn btn-secondary">
+                                <input type="radio" name="q10" id="q10option5" value=5 autocomplete="off"> 5
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                <br>
+                <br>
+
+                <button type="button" id="submitBtn" class="btn btn-primary">Submit</button>
+
+
+            </div>
+            <div class="col-md-2"></div>
+
+
+
+        </div>
+        
+
+    </div>
+
+
+
+
+</body>
+
+</html>
